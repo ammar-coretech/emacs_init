@@ -41,6 +41,8 @@
 ;; Add the column number to modeline
 (column-number-mode 1)
 
+
+
 ;; Remove those modes from modeline
 (defun my/clean-modeline ()
   (dolist (mode '(eldoc-mode
@@ -109,7 +111,6 @@
 ;; Make ESC (nooo, use C-g better so that you can
 ;; use evil mode in minibuffer) quit prompts
 (global-set-key (kbd "C-g") 'keyboard-escape-quit)
-(global-set-key (kbd "C-x j") 'counsel-switch-buffer)
 ;; (global-unset-key (kbd "ESC"))
 
 ;; Clear increase text size and decrease
@@ -172,6 +173,7 @@
 ;;(load-theme 'immaterial-dark t)
 
 (mapc #'disable-theme custom-enabled-themes)
+;; (load-theme 'github-dark-vscode t)
 (load-theme 'gruber-darker t)
 ;;(use-package 'gruber-darker)
 ;; gruber-darker darktooth-dark
@@ -238,7 +240,7 @@
 
 (setq org-deadline-warning-days 7)
 
-(global-set-key (kbd "C-c l") #'org-store-link) ;; confilit with lsp-mode
+;; (global-set-key (kbd "C-c l") #'org-store-link) ;; confilit with lsp-mode
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
 
@@ -340,7 +342,6 @@
 
 
 
-(global-set-key (kbd "C-c q") #'counsel-org-tag)
 ;; commands for tags (counsel-org-tag, org-set-tags-command)
 ;; known tags
 ;; (setq org-tag-alist
@@ -583,33 +584,8 @@
   :init
   (global-corfu-mode))
 
-;; (use-package counsel
-;;   :bind (("M-x" . counsel-M-x)
-;; 	 ("C-x b" . counsel-ibuffer)
-;; 	 ("C-x C-f" . counsel-find-file)
-;; 	 :map minibuffer-local-map
-;; 	 ("C-r" . 'counsel-minibuffer-history))
-;;   :config
-;;   (setq ivy-initial-inputs-alist nil )) ;; Don't start searches with ^
 
 
-;; (use-package ivy
-;;   :diminish
-;;   :bind (("C-s" . swiper)
-;; 	 :map ivy-minibuffer-map
-;; 	 ("TAB" . ivy-alt-done)
-;; 	 ("C-l" . ivy-alt-done)
-;; 	 ("C-j" . ivy-next-line)
-;; 	 ("C-k" . ivy-previous-line)
-;; 	 :map ivy-switch-buffer-map
-;; 	 ("C-k" . ivy-previous-line)
-;; 	 ("C-l" . ivy-done)
-;; 	 ("C-d" . ivy-switch-buffer-kill)
-;; 	 :map ivy-reverse-i-search-map
-;; 	 ("C-k" . ivy-previous-line)
-;; 	 ("C-d" . ivy-reverse-i-search-kill))
-;;   :config
-;;   (ivy-mode 1))
 
 
 (use-package which-key
@@ -619,19 +595,9 @@
   (setq which-key-idle-delay 3))
 
 
-(use-package ivy-rich
-  :config
-  (ivy-rich-mode 1))
+(use-package helpful)
 
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-function-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . #'helpful-callable)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
+
 (use-package general
   :config
   (general-create-definer rune/leader-keys
@@ -708,6 +674,10 @@
   (define-key evil-visual-state-map (kbd "C-r") 'undo-fu-redo)
   )
 
+(use-package better-jumper
+  :config
+  (better-jumper-mode +1))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -729,6 +699,28 @@
 ;; Add Magit and projectile here
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; projectile
+
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/")
+    (setq projectile-project-search-path '("~/")))
+  (setq projectile-switch-project-action #'project-dired))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Magit
+(use-package magit
+  :commands (magit-status magit-get-current-branch)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+;; Ensure magit is loaded before binding
+(global-set-key (kbd "C-c g") 'magit-status)
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1099,6 +1091,8 @@
 ;; for performance
 (use-package lsp-mode
   :ensure t
+  :init
+  (setq lsp-keymap-prefix "C-c l")
   :hook ((python-mode . lsp)
 	 (go-mode . lsp)
 	 (csharp-mode . lsp)
@@ -1120,6 +1114,9 @@
         lsp-pylsp-plugins-pyflakes-enabled nil
         lsp-pylsp-plugins-flake8-enabled t))
 
+(setq lsp-keymap-prefix "C-c l")
+(use-package ccls
+  )
 
 
 ;;--- C# support ---
@@ -1195,17 +1192,17 @@
     (kbd "g d") #'lsp-find-definition))
 
 
-;;; Projectile ;;;;
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  (setq projectile-switch-project-action #'projectile-dired))
+;; ;;; Projectile ;;;;
+;; (use-package projectile
+;;   :diminish projectile-mode
+;;   :config (projectile-mode)
+;;   :bind-keymap
+;;   ("C-c p" . projectile-command-map)
+;;   :init
+;;   (setq projectile-switch-project-action #'projectile-dired))
 
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
+;; (use-package counsel-projectile
+;;   :config (counsel-projectile-mode))
 
 
 
@@ -1263,12 +1260,24 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("8f5b54bf6a36fe1c138219960dd324aad8ab1f62f543bed73ef5ad60956e36ae"
+   '("b9f44212b4be6f0466811c5d8a297dda3c40dbf4c4cfd97c1686fceb2043b617"
+     "8f5b54bf6a36fe1c138219960dd324aad8ab1f62f543bed73ef5ad60956e36ae"
      "23e9480ad7fd68bff64f6ecf3c31719c7fe2a34c11f8e27206cd998739f40c84"
      "5a4cdc4365122d1a17a7ad93b6e3370ffe95db87ed17a38a94713f6ffe0d8ceb"
      default))
  '(helm-minibuffer-history-key "M-p")
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(better-jumper blacken ccls cmake-ide cmake-mode command-log-mode
+		   company corfu counsel-projectile dap-mode
+		   dired-hide-dotfiles doom-modeline eterm-256color
+		   evil-collection evil-mc evil-org
+		   exec-path-from-shell general
+		   github-dark-vscode-theme go-mode
+		   gruber-darker-theme helpful ivy-rich languagetool
+		   lsp-ui magit markdown-preview-eww
+		   markdown-preview-mode org-bullets pyvenv ssh
+		   undo-fu undo-fu-session visual-fill-column
+		   vterm-toggle yasnippet))
  '(package-vc-selected-packages nil))
 
 (put 'upcase-region 'disabled nil)
