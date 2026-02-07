@@ -145,7 +145,7 @@
 ;; it confilicts with a binding. use spc-c to compile
 ;; Compile
 ;; (global-set-key (kbd "M-c") 'compile)
-(global-set-key (kbd "C-c C-c") #'compile)
+(global-set-key (kbd "C-c c") #'compile)
 
 
 ;; Revert Buffer
@@ -242,7 +242,7 @@
 
 ;; (global-set-key (kbd "C-c l") #'org-store-link) ;; confilit with lsp-mode
 (global-set-key (kbd "C-c a") #'org-agenda)
-(global-set-key (kbd "C-c c") #'org-capture)
+(global-set-key (kbd "C-c t") #'org-capture)
 
 
 (setq org-refile-targets
@@ -598,17 +598,18 @@
 (use-package helpful)
 
 
-(use-package general
-  :config
-  (general-create-definer rune/leader-keys
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
+;; (use-package general
+;;   :config
+;;   (general-create-definer rune/leader-keys
+;;     :keymaps '(normal insert visual emacs)
+;;     :prefix "SPC"
+;;     :global-prefix "C-SPC")
 
-  (rune/leader-keys
-    "t"  '(:ignore t :which-key "toggles")
-    "tt" '(org-timer-set-timer :which-key "org timer")
-    "c" 'compile))
+;;   (rune/leader-keys
+;;     "t"  '(:ignore t :which-key "toggles")
+;;     "tt" '(org-timer-set-timer :which-key "org timer")
+;;     "c" 'compile))
+
 ;; the line above makes you do a command "compile" after space-c
 ;; the line under makes the command empty when respawned
 ;;(setq compile-command "LD_LIBRARY_PATH=/usr/local/lib64 make && ./main")
@@ -691,8 +692,8 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-(rune/leader-keys
-  "ts" '(hydra-text-scale/body :which-key "scale text"))
+;; (rune/leader-keys
+;;   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1266,18 +1267,7 @@
      "5a4cdc4365122d1a17a7ad93b6e3370ffe95db87ed17a38a94713f6ffe0d8ceb"
      default))
  '(helm-minibuffer-history-key "M-p")
- '(package-selected-packages
-   '(better-jumper blacken ccls cmake-ide cmake-mode command-log-mode
-		   company corfu counsel-projectile dap-mode
-		   dired-hide-dotfiles doom-modeline eterm-256color
-		   evil-collection evil-mc evil-org
-		   exec-path-from-shell general
-		   github-dark-vscode-theme go-mode
-		   gruber-darker-theme helpful ivy-rich languagetool
-		   lsp-ui magit markdown-preview-eww
-		   markdown-preview-mode org-bullets pyvenv ssh
-		   undo-fu undo-fu-session visual-fill-column
-		   vterm-toggle yasnippet))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages nil))
 
 (put 'upcase-region 'disabled nil)
