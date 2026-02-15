@@ -51,9 +51,11 @@
 		  whitespace-mode
                   auto-revert-mode
 		  ivy-mode
+		  better-jumper-mode
 		  evil-collection-unimpaired-mode
 		  hs-minor-mode
 		  lsp-lens-mode
+		  abbrev-mode
 		  yas-minor-mode
 		  evil-mc-mode
                   flymake-mode))
